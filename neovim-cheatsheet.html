@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neovim + LazyVim Cheatsheet</title>
+  <style>
+    :root {
+      --bg:        #1e1e2e;
+      --surface:   #181825;
+      --surface2:  #313244;
+      --border:    #45475a;
+      --text:      #cdd6f4;
+      --subtext:   #a6adc8;
+      --green:     #a6e3a1;
+      --blue:      #89b4fa;
+      --mauve:     #cba6f7;
+      --peach:     #fab387;
+      --yellow:    #f9e2af;
+      --red:       #f38ba8;
+      --teal:      #94e2d5;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      padding: 2rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      color: var(--mauve);
+      letter-spacing: 0.05em;
+      margin-bottom: 0.25rem;
+    }
+
+    header p {
+      color: var(--subtext);
+      font-size: 0.9rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 1.25rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 0.65rem 1rem;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-header.modes    { background: #2d1f5e; color: var(--mauve); }
+    .card-header.motion   { background: #1a2f4a; color: var(--blue);  }
+    .card-header.edit     { background: #1f3a28; color: var(--green); }
+    .card-header.search   { background: #3a2a1f; color: var(--peach); }
+    .card-header.lazyvim  { background: #2a1f3a; color: var(--mauve); }
+    .card-header.lsp      { background: #1f3a3a; color: var(--teal);  }
+    .card-header.buffers  { background: #3a1f2a; color: var(--red);   }
+    .card-header.neotree  { background: #2a3a1f; color: var(--yellow);}
+    .card-header.telescope{ background: #1f2a3a; color: var(--blue);  }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    tr:nth-child(even) td {
+      background: var(--surface2);
+    }
+
+    td {
+      padding: 0.45rem 1rem;
+      vertical-align: top;
+    }
+
+    td:first-child {
+      white-space: nowrap;
+      width: 1%;
+    }
+
+    td:last-child {
+      color: var(--subtext);
+      font-size: 0.88rem;
+    }
+
+    kbd {
+      display: inline-block;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-bottom-width: 2px;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 0.82rem;
+      color: var(--yellow);
+      white-space: nowrap;
+    }
+
+    .tip {
+      background: var(--surface2);
+      border-left: 3px solid var(--mauve);
+      margin: 1.25rem auto;
+      padding: 0.75rem 1rem;
+      border-radius: 0 6px 6px 0;
+      max-width: 1400px;
+      color: var(--subtext);
+      font-size: 0.88rem;
+    }
+
+    .tip strong { color: var(--mauve); }
+
+    .section-title {
+      max-width: 1400px;
+      margin: 2rem auto 0.75rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--subtext);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4rem;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      color: var(--border);
+      font-size: 0.78rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>⌨️ Neovim + LazyVim Cheatsheet</h1>
+  <p>Everything covered in your learning session · LazyVim default config</p>
+</header>
+
+<!-- ─── SECTION: FOUNDATIONS ─────────────────────────────────── -->
+<div class="section-title">Foundations</div>
+<div class="grid">
+
+  <div class="card">
+    <div class="card-header modes">🎭 Modes</div>
+    <table>
+      <tr><td><kbd>i</kbd></td><td>Enter Insert mode (before cursor)</td></tr>
+      <tr><td><kbd>a</kbd></td><td>Enter Insert mode (after cursor)</td></tr>
+      <tr><td><kbd>A</kbd></td><td>Enter Insert mode at end of line</td></tr>
+      <tr><td><kbd>o</kbd></td><td>Open new line below and enter Insert</td></tr>
+      <tr><td><kbd>O</kbd></td><td>Open new line above and enter Insert</td></tr>
+      <tr><td><kbd>v</kbd></td><td>Enter Visual mode (character select)</td></tr>
+      <tr><td><kbd>V</kbd></td><td>Enter Visual Line mode</td></tr>
+      <tr><td><kbd>Ctrl-v</kbd></td><td>Enter Visual Block mode</td></tr>
+      <tr><td><kbd>:</kbd></td><td>Enter Command mode</td></tr>
+      <tr><td><kbd>Esc</kbd></td><td>Return to Normal mode (home base)</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-header motion">💾 Save &amp; Quit</div>
+    <table>
+      <tr><td><kbd>:w</kbd></td><td>Save (write) file</td></tr>
+      <tr><td><kbd>:q</kbd></td><td>Quit</td></tr>
+      <tr><td><kbd>:wq</kbd></td><td>Save and quit</td></tr>
+      <tr><td><kbd>ZZ</kbd></td><td>Save and quit (shortcut)</td></tr>
+      <tr><td><kbd>:q!</kbd></td><td>Quit without saving (force)</td></tr>
+      <tr><td><kbd>:qa</kbd></td><td>Quit all open windows</td></tr>
+    </table>
+  </div>
+
+</div>
+
+<!-- ─── SECTION: MOVEMENT ─────────────────────────────────────── -->
+<div class="section-title">Movement</div>
+<div class="grid">
+
+  <div class="card">
+    <div class="card-header motion">🧭 Basic Movement</div>
+    <table>
+      <tr><td><kbd>h</kbd></td><td>Move left</td></tr>
+      <tr><td><kbd>j</kbd></td><td>Move down</td></tr>
+      <tr><td><kbd>k</kbd></td><td>Move up</td></tr>
+      <tr><td><kbd>l</kbd></td><td>Move right</td></tr>
+      <tr><td><kbd>Ctrl-d</kbd></td><td>Scroll down half page</td></tr>
+      <tr><td><kbd>Ctrl-u</kbd></td><td>Scroll up half page</td></tr>
+      <tr><td><kbd>zz</kbd></td><td>Center screen on cursor</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-header motion">⚡ Word Motions</div>
+    <table>
+      <tr><td><kbd>w</kbd></td><td>Jump to start of next word (stops at punctuation)</td></tr>
+      <tr><td><kbd>W</kbd></td><td>Jump to next WORD (whitespace-separated only)</td></tr>
+      <tr><td><kbd>b</kbd></td><td>Jump backward to start of word</td></tr>
+      <tr><td><kbd>B</kbd></td><td>Jump backward to start of WORD</td></tr>
+      <tr><td><kbd>e</kbd></td><td>Jump to end of word</td></tr>
+      <tr><td><kbd>E</kbd></td><td>Jump to end of WORD</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-header motion">📏 Line Motions</div>
+    <table>
+      <tr><td><kbd>0</kbd></td><td>Jump to absolute start of line</td></tr>
+      <tr><td><kbd>^</kbd></td><td>Jump to first non-blank character</td></tr>
+      <tr><td><kbd>$</kbd></td><td>Jump to end of line</td></tr>
+      <tr><td><kbd>f{char}</kbd></td><td>Find — jump to next {char} on line</td></tr>
+      <tr><td><kbd>t{char}</kbd></td><td>Till — jump just before next {char}</td></tr>
+      <tr><td><kbd>;</kbd></td><td>Repeat last f/t jump (forward)</td></tr>
+      <tr><td><kbd>,</kbd></td><td>Repeat last f/t jump (backward)</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-header motion">📄 File Motions</div>
+    <table>
+      <tr><td><kbd>gg</kbd></td><td>Jump to top of file</td></tr>
+      <tr><td><kbd>G</kbd></td><td>Jump to bottom of file</td></tr>
+      <tr><td><kbd>{n}G</kbd></td><td>Jump to line n (e.g. <kbd>50G</kbd>)</td></tr>
+      <tr><td><kbd>:{n}</kbd></td><td>Jump to line n via command (e.g. <kbd>:50</kbd>)</td></tr>
+      <tr><td><kbd>Ctrl-o</kbd></td><td>Jump back in location history</td></tr>
+      <tr><td><kbd>Ctrl-i</kbd></td><td>Jump forward in location history</td></tr>
+    </table>
+  </div>
+
+</div>
+
+<!-- ─── SECTION: EDITING ──────────────────────────────────────── -->
+<div class="section-title">Editing — The Vim Grammar: [count] operator motion</div>
+<div class="grid">
+
+  <div class="card">
+    <div class="card-header edit">✂️ Operators</div>
+    <table>
+      <tr><td><kbd>d</kbd></td><td>Delete (cuts to register)</td></tr>
+      <tr><td><kbd>c</kbd></td><td>Change (delete + enter Insert mode)</td></tr>
+      <tr><td><kbd>y</kbd></td><td>Yank (copy)</td></tr>
+      <tr><td><kbd>p</kbd></td><td>Paste after cursor</td></tr>
+      <tr><td><kbd>P</kbd></td><td>Paste before cursor</td></tr>
+      <tr><td><kbd>u</kbd></td><td>Undo</td></tr>
+      <tr><td><kbd>Ctrl-r</kbd></td><td>Redo</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-header edit">🔥 Operator + Motion Combos</div>
+    <table>
+      <tr><td><kbd>dw</kbd></td><td>Delete to next word</td></tr>
+      <tr><td><kbd>d$</kbd></td><td>Delete to end of line</td></tr>
+      <tr><td><kbd>dd</kbd></td><td>Delete entire line</td></tr>
+      <tr><td><kbd>D</kbd></td><td>Delete to end of line (shortcut for d$)</td></tr>
+      <tr><td><kbd>cw</kbd></td><td>Change word</td></tr>
+      <tr><td><kbd>C</kbd></td><td>Change to end of line (shortcut for c$)</td></tr>
+      <tr><td><kbd>cc</kbd></td><td>Change entire line</td></tr>
+      <tr><td><kbd>yy</kbd></td><td>Yank (copy) entire line</td></tr>
+      <tr><td><kbd>2dd</kbd></td><td>Delete 2 lines (prefix any op with count)</td></tr>
+      <tr><td><kbd>3w</kbd></td><td>Jump 3 words forward</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-header edit">🎯 Text Objects</div>
+    <table>
+      <tr><td><kbd>iw</kbd></td><td>Inner word (just the word)</td></tr>
+      <tr><td><kbd>aw</kbd></td><td>Around word (word + trailing space)</td></tr>
+      <tr><td><kbd>i"</kbd></td><td>Inner double quotes</td></tr>
+      <tr><td><kbd>a"</kbd></td><td>Around double quotes (includes quotes)</td></tr>
+      <tr><td><kbd>i'</kbd></td><td>Inner single quotes</td></tr>
+      <tr><td><kbd>i(</kbd></td><td>Inner parentheses</td></tr>
+      <tr><td><kbd>a(</kbd></td><td>Around parentheses (includes parens)</td></tr>
+      <tr><td><kbd>i{</kbd></td><td>Inner curly braces</td></tr>
+      <tr><td><kbd>it</kbd></td><td>Inner HTML/XML tag</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-header edit">💡 Text Object Combos (most used)</div>
+    <table>
+      <tr><td><kbd>ci"</kbd></td><td>Change inside quotes → keeps quotes, replaces content</td></tr>
+      <tr><td><kbd>ca"</kbd></td><td>Change around quotes → removes quotes too</td></tr>
+      <tr><td><kbd>di(</kbd></td><td>Delete inside parentheses</td></tr>
+      <tr><td><kbd>daw</kbd></td><td>Delete word including surrounding space</td></tr>
+      <tr><td><kbd>yiw</kbd></td><td>Yank (copy) just the word under cursor</td></tr>
+      <tr><td><kbd>ci{</kbd></td><td>Change inside curly braces (e.g. function body)</td></tr>
+      <tr><td><kbd>vit</kbd></td><td>Visually select inside HTML tag</td></tr>
+    </table>
+  </div>
+
+</div>
+
+<!-- ─── SECTION: SEARCH ───────────────────────────────────────── -->
+<div class="section-title">Search &amp; Replace</div>
+<div class="grid">
+
+  <div class="card">
+    <div class="card-header search">🔍 In-File Search</div>
+    <table>
+      <tr><td><kbd>/pattern</kbd></td><td>Search forward in file</td></tr>
+      <tr><td><kbd>?pattern</kbd></td><td>Search backward in file</td></tr>
+      <tr><td><kbd>n</kbd></td><td>Next match (same direction)</td></tr>
+      <tr><td><kbd>N</kbd></td><td>Previous match (reverse direction)</td></tr>
+      <tr><td><kbd>*</kbd></td><td>Search for word under cursor (forward)</td></tr>
+      <tr><td><kbd>#</kbd></td><td>Search for word under cursor (backward)</td></tr>
+      <tr><td><kbd>:noh</kbd></td><td>Clear search highlights</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-header search">🔄 Search &amp; Replace</div>
+    <table>
+      <tr><td><kbd>:%s/old/new/g</kbd></td><td>Replace all in file</td></tr>
+      <tr><td><kbd>:%s/old/new/gc</kbd></td><td>Replace all with confirmation</td></tr>
+      <tr><td><kbd>:5,10s/old/new/g</kbd></td><td>Replace in lines 5–10 only</td></tr>
+      <tr><td><kbd>'&lt;,'&gt;s/old/new/g</kbd></td><td>Replace in visual selection</td></tr>
+    </table>
+  </div>
+
+</div>
+
+<!-- ─── SECTION: LAZYVIM ──────────────────────────────────────── -->
+<div class="section-title">LazyVim — Leader Key Shortcuts (Space = Leader)</div>
+<div class="grid">
+
+  <div class="card">
+    <div class="card-header telescope">🔭 Telescope (Fuzzy Finder)</div>
+    <table>
+      <tr><td><kbd>Space Space</kbd></td><td>Find files by name in project</td></tr>
+      <tr><td><kbd>Space /</kbd></td><td>Live grep across entire project</td></tr>
+      <tr><td><kbd>Space s g</kbd></td><td>Search → grep (same as Space /)</td></tr>
+      <tr><td><kbd>Space s w</kbd></td><td>Search for word under cursor across project</td></tr>
+      <tr><td><kbd>Space s s</kbd></td><td>Search document symbols (functions, classes)</td></tr>
+      <tr><td><kbd>Space s S</kbd></td><td>Search workspace symbols (entire project)</td></tr>
+      <tr><td><kbd>Space f r</kbd></td><td>Recently opened files</td></tr>
+      <tr><td><kbd>Space f b</kbd></td><td>Find open buffers</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-header telescope">⌨️ Inside Telescope</div>
+    <table>
+      <tr><td><kbd>Type</kbd></td><td>Fuzzy filter results instantly</td></tr>
+      <tr><td><kbd>Ctrl-j / Ctrl-k</kbd></td><td>Move down / up in results</td></tr>
+      <tr><td><kbd>Enter</kbd></td><td>Open selected file</td></tr>
+      <tr><td><kbd>Ctrl-v</kbd></td><td>Open in vertical split</td></tr>
+      <tr><td><kbd>Ctrl-x</kbd></td><td>Open in horizontal split</td></tr>
+      <tr><td><kbd>Esc</kbd></td><td>Close Telescope</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-header neotree">🌳 Neo-tree (File Explorer)</div>
+    <table>
+      <tr><td><kbd>Space e</kbd></td><td>Toggle file tree sidebar</td></tr>
+      <tr><td><kbd>Space E</kbd></td><td>Open tree focused on current file</td></tr>
+      <tr><td><kbd>j / k</kbd></td><td>Move up/down in tree</td></tr>
+      <tr><td><kbd>Enter</kbd></td><td>Open file or expand folder</td></tr>
+      <tr><td><kbd>a</kbd></td><td>Add new file</td></tr>
+      <tr><td><kbd>d</kbd></td><td>Delete file</td></tr>
+      <tr><td><kbd>r</kbd></td><td>Rename file</td></tr>
+      <tr><td><kbd>y</kbd></td><td>Copy file</td></tr>
+      <tr><td><kbd>x</kbd></td><td>Cut file</td></tr>
+      <tr><td><kbd>p</kbd></td><td>Paste file</td></tr>
+      <tr><td><kbd>/</kbd></td><td>Filter/search within tree</td></tr>
+      <tr><td><kbd>q</kbd></td><td>Close tree</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-header buffers">📑 Buffers &amp; Windows</div>
+    <table>
+      <tr><td><kbd>Shift-l</kbd></td><td>Next buffer (tab right)</td></tr>
+      <tr><td><kbd>Shift-h</kbd></td><td>Previous buffer (tab left)</td></tr>
+      <tr><td><kbd>Space b d</kbd></td><td>Close / delete current buffer</td></tr>
+      <tr><td><kbd>Space b b</kbd></td><td>Visual buffer picker</td></tr>
+      <tr><td><kbd>Ctrl-h</kbd></td><td>Move focus to left window/split</td></tr>
+      <tr><td><kbd>Ctrl-l</kbd></td><td>Move focus to right window/split</td></tr>
+      <tr><td><kbd>Ctrl-j</kbd></td><td>Move focus to window below</td></tr>
+      <tr><td><kbd>Ctrl-k</kbd></td><td>Move focus to window above</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-header lsp">🧠 LSP — IDE Features</div>
+    <table>
+      <tr><td><kbd>g d</kbd></td><td>Go to Definition</td></tr>
+      <tr><td><kbd>g r</kbd></td><td>Go to References (shows in Telescope)</td></tr>
+      <tr><td><kbd>g I</kbd></td><td>Go to Implementation</td></tr>
+      <tr><td><kbd>K</kbd></td><td>Hover docs — type info + signature</td></tr>
+      <tr><td><kbd>Space c a</kbd></td><td>Code Actions (fixes, imports, refactors)</td></tr>
+      <tr><td><kbd>Space c r</kbd></td><td>Rename symbol across entire project</td></tr>
+      <tr><td><kbd>[ d</kbd></td><td>Jump to previous diagnostic (error/warning)</td></tr>
+      <tr><td><kbd>] d</kbd></td><td>Jump to next diagnostic</td></tr>
+      <tr><td><kbd>Space x x</kbd></td><td>Show diagnostics list for current file</td></tr>
+    </table>
+  </div>
+
+</div>
+
+<div class="tip">
+  <strong>💡 The Vim Grammar:</strong>
+  <code>[count] + operator + motion/text-object</code> — learn 5 operators and 10 motions and you get 50+ commands for free.
+  Example: <code>3dw</code> = delete 3 words · <code>ci"</code> = change inside quotes · <code>yiw</code> = copy word under cursor.
+</div>
+
+<div class="tip">
+  <strong>💡 Daily Workflow Cheatsheet:</strong>
+  Find file → <kbd>Space Space</kbd> ·
+  Grep project → <kbd>Space /</kbd> ·
+  Search word → <kbd>Space s w</kbd> ·
+  File tree → <kbd>Space e</kbd> ·
+  Go to def → <kbd>g d</kbd> ·
+  Jump back → <kbd>Ctrl-o</kbd> ·
+  Hover docs → <kbd>K</kbd>
+</div>
+
+<footer>Generated from your Neovim + LazyVim learning session · 2026</footer>
+
+</body>
+</html>
